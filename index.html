@@ -2,125 +2,193 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1">
-<title>DJODA | Escáner continuo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <title>DJODA | Escáner QR</title>
 
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 
-<style>
-  * { box-sizing: border-box; }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-  body {
-    margin: 0;
-    padding: 18px;
-    background: #07144F;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-  }
+    body {
+      margin: 0;
+      padding: 16px;
+      background: #07144F;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
 
-  main {
-    max-width: 480px;
-    margin: auto;
-  }
+    main {
+      max-width: 480px;
+      margin: auto;
+    }
 
-  h1 {
-    color: #D4F03C;
-    font-size: 44px;
-    margin: 12px 0 4px;
-  }
+    h1 {
+      color: #D4F03C;
+      font-size: 44px;
+      margin: 12px 0 4px;
+    }
 
-  .subtitulo {
-    color: #22D6F2;
-    margin-bottom: 20px;
-  }
+    .subtitulo {
+      color: #22D6F2;
+      margin-bottom: 20px;
+    }
 
-  .caja {
-    background: #0B1E8C;
-    padding: 16px;
-    border-radius: 16px;
-    margin: 14px 0;
-  }
+    .caja {
+      background: #0B1E8C;
+      padding: 16px;
+      border-radius: 16px;
+      margin: 14px 0;
+    }
 
-  #video {
-    width: 100%;
-    background: #020826;
-    border-radius: 12px;
-    display: block;
-  }
+    video {
+      width: 100%;
+      background: #020826;
+      border-radius: 12px;
+      display: block;
+    }
 
-  button {
-    background: #D4F03C;
-    color: #07144F;
-    border: 0;
-    border-radius: 10px;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    margin: 8px 0;
-    width: 100%;
-    cursor: pointer;
-  }
+    button {
+      background: #D4F03C;
+      color: #07144F;
+      border: 0;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      margin: 8px 0;
+      width: 100%;
+      cursor: pointer;
+    }
 
-  button.secundario {
-    background: #22D6F2;
-  }
+    button.secundario {
+      background: #22D6F2;
+    }
 
-  input {
-    width: 100%;
-    padding: 13px;
-    border-radius: 9px;
-    border: 0;
-    font-size: 16px;
-  }
+    input {
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      border: 0;
+      font-size: 16px;
+    }
 
-  #estado {
-    padding: 13px;
-    border-radius: 10px;
-    background: #243781;
-    margin: 12px 0;
-    overflow-wrap: anywhere;
-  }
+    #estado,
+    #resultado {
+      background: #243781;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 12px 0;
+      overflow-wrap: anywhere;
+    }
 
-  #resultado {
-    padding: 20px;
-    border-radius: 12px;
-    font-size: 19px;
-    font-weight: bold;
-    background: #243781;
-    margin-top: 15px;
-    min-height: 90px;
-    overflow-wrap: anywhere;
-  }
+    #resultado {
+      font-size: 18px;
+      font-weight: bold;
+      min-height: 65px;
+    }
 
-  .ok {
-    background: #166534 !important;
-  }
+    .ok {
+      background: #166534 !important;
+    }
 
-  .repetida {
-    background: #854d0e !important;
-  }
+    .repetida {
+      background: #854d0e !important;
+    }
 
-  .error {
-    background: #991b1b !important;
-  }
+    .error {
+      background: #991b1b !important;
+    }
 
-  .nota {
-    font-size: 13px;
-    color: #d2dcfa;
-    line-height: 1.5;
-  }
+    .nota {
+      font-size: 13px;
+      color: #d2dcfa;
+      line-height: 1.5;
+    }
 
-  [hidden] { display: none !important; }
-</style>
+    [hidden] {
+      display: none !important;
+    }
+
+    /* VENTANA EMERGENTE */
+
+    .modal-fondo {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 25, 0.86);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-tarjeta {
+      width: 100%;
+      max-width: 430px;
+      padding: 30px 22px;
+      border-radius: 22px;
+      box-shadow: 0 12px 45px rgba(0,0,0,.4);
+      color: white;
+    }
+
+    .modal-tarjeta.good {
+      background: #166534;
+    }
+
+    .modal-tarjeta.warn {
+      background: #854d0e;
+    }
+
+    .modal-tarjeta.bad {
+      background: #991b1b;
+    }
+
+    .modal-icono {
+      font-size: 65px;
+      margin-bottom: 12px;
+    }
+
+    .modal-tarjeta h2 {
+      font-size: 27px;
+      line-height: 1.2;
+      margin: 0 0 16px;
+    }
+
+    .modal-tarjeta p {
+      font-size: 19px;
+      line-height: 1.5;
+      margin: 0 0 22px;
+      overflow-wrap: anywhere;
+      white-space: pre-line;
+    }
+
+    #modalAceptar {
+      background: #D4F03C;
+      color: #07144F;
+      font-size: 22px;
+      padding: 18px;
+      margin: 0;
+    }
+
+    /* Evita mover la pantalla tras el modal */
+
+    body.modal-activo {
+      overflow: hidden;
+    }
+  </style>
 </head>
 
 <body>
 <main>
 
   <h1>DJODA</h1>
+
   <div class="subtitulo">
     CONTROL DE ACCESO · ESCÁNER QR
   </div>
@@ -130,6 +198,7 @@
   </div>
 
   <div class="caja">
+
     <video
       id="video"
       autoplay
@@ -137,27 +206,32 @@
       playsinline>
     </video>
 
-    <button id="activar" onclick="activarCamara()">
+    <button onclick="activarCamara()">
       Activar cámara
     </button>
 
-    <button class="secundario"
-            onclick="detenerCamara()">
+    <button
+      class="secundario"
+      onclick="detenerCamara()">
       Detener cámara
     </button>
 
     <p class="nota">
-      Apuntá al código QR de cada entrada.
-      Esperá el resultado antes de continuar.
+      Apuntá al código QR.
+      Esperá el resultado y presioná ACEPTAR
+      para continuar.
     </p>
+
   </div>
 
-  <div id="resultado" role="status"
+  <div id="resultado"
+       role="status"
        aria-live="polite">
     Esperando conexión...
   </div>
 
   <div class="caja">
+
     <h3>Validación manual</h3>
 
     <input
@@ -165,79 +239,147 @@
       type="text"
       placeholder="Pegá el código o enlace del QR">
 
-    <button class="secundario"
-            onclick="validarManual()">
+    <button
+      class="secundario"
+      onclick="validarManual()">
       Validar código
     </button>
+
   </div>
 
   <p class="nota">
-    El acceso a Google Sheets permanece
-    reservado a los administradores.
-    Esta pantalla no contiene contraseñas.
+    El escáner necesita una sesión autorizada
+    de DJODA. Los guardias no acceden
+    directamente a Google Sheets.
   </p>
 
 </main>
 
+<!-- VENTANA DE RESULTADO -->
+
+<div id="modalResultado"
+     class="modal-fondo"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modalTitulo"
+     hidden>
+
+  <div id="modalTarjeta" class="modal-tarjeta">
+
+    <div id="modalIcono" class="modal-icono">
+    </div>
+
+    <h2 id="modalTitulo"></h2>
+
+    <p id="modalDetalle"></p>
+
+    <button id="modalAceptar"
+            type="button"
+            onclick="cerrarModal()">
+      ACEPTAR
+    </button>
+
+  </div>
+</div>
+
 <script>
 'use strict';
 
-// Datos de conexión recibidos desde Apps Script.
+/* ===================================
+   CONEXIÓN CON GOOGLE APPS SCRIPT
+   =================================== */
+
 const parametros = new URLSearchParams(
   location.hash.replace(/^#/, '')
 );
 
-const bridgeId = parametros.get('bridgeId') || '';
+const bridgeId =
+  parametros.get('bridgeId') || '';
+
 const parentOrigin =
   parametros.get('parentOrigin') || '';
 
-const video = document.getElementById('video');
-const canvas = document.createElement('canvas');
-const contexto = canvas.getContext(
-  '2d', { willReadFrequently: true }
-);
+const APP_ID = 'DJODA_V3';
+
+const $ = id => document.getElementById(id);
 
 let conectado = false;
 let esperandoRespuesta = false;
+let modalOpen = false;
+let requiereRetirarQR = false;
+
 let camara = null;
 let detector = null;
 let activo = false;
 let procesandoImagen = false;
+
 let ultimoAnalisis = 0;
-let ultimoCodigo = '';
 let ausenciaDesde = 0;
-let temporizadorRespuesta = null;
+let ultimoCodigo = '';
+
 let temporizadorConexion = null;
+let temporizadorRespuesta = null;
+
+let audioContexto = null;
 
 const intervaloAnalisis = 180;
 
-// Validar el origen del panel de Apps Script.
-function origenPermitido(valor) {
-  try {
-    const u = new URL(valor);
-
-    if (u.protocol !== 'https:') return false;
-
-    return (
-      u.hostname === 'script.google.com' ||
-      u.hostname.endsWith('.googleusercontent.com')
-    );
-  } catch (e) {
-    return false;
-  }
-}
+/* ===================================
+   FUNCIONES DE PANTALLA
+   =================================== */
 
 function mostrarEstado(texto) {
-  document.getElementById('estado').textContent =
-    texto;
+  $('estado').textContent = texto;
 }
 
 function mostrarResultado(texto, clase = '') {
-  const elemento =
-    document.getElementById('resultado');
+  $('resultado').className = clase;
+  $('resultado').textContent = texto;
+}
 
-  elemento.className = clase;
-  elemento.textContent = texto;
+function mostrarModal(tipo, titulo, detalle) {
+  modalOpen = true;
+
+  const tarjeta = $('modalTarjeta');
+
+  tarjeta.className = 'modal-tarjeta ' + tipo;
+
+  $('modalIcono').textContent =
+    tipo === 'good' ? '✓' :
+    tipo === 'warn' ? '⚠' : '✕';
+
+  $('modalTitulo').textContent = titulo;
+  $('modalDetalle').textContent = detalle || '';
+
+  $('modalResultado').hidden = false;
+
+  document.body.classList.add('modal-activo');
+
+  $('modalAceptar').focus();
+}
+
+function cerrarModal() {
+  $('modalResultado').hidden = true;
+
+  document.body.classList.remove('modal-activo');
+
+  modalOpen = false;
+
+  if (!conectado) {
+    mostrarEstado(
+      'Sin conexión. Volvé al panel de DJODA.'
+    );
+    return;
+  }
+
+  // Se debe retirar el QR anterior
+  // antes de permitir la siguiente lectura.
+  requiereRetirarQR = true;
+  ausenciaDesde = 0;
+
+  mostrarEstado(
+    'Retirá el QR anterior para continuar.'
+  );
 }
 
 function errorTexto(e) {
@@ -246,18 +388,41 @@ function errorTexto(e) {
     : 'Error desconocido';
 }
 
+/* ===================================
+   COMUNICACIÓN SEGURA ENTRE VENTANAS
+   =================================== */
+
+function origenPermitido(valor) {
+  try {
+    const u = new URL(valor);
+
+    if (u.protocol !== 'https:') {
+      return false;
+    }
+
+    return (
+      u.hostname === 'script.google.com' ||
+      u.hostname.endsWith('.googleusercontent.com')
+    );
+
+  } catch (e) {
+    return false;
+  }
+}
+
 function avisarPanel(tipo, extras = {}) {
   if (
     !window.opener ||
     window.opener.closed ||
     !origenPermitido(parentOrigin) ||
-    !bridgeId
+    !bridgeId ||
+    bridgeId.length !== 48
   ) {
     return false;
   }
 
   window.opener.postMessage({
-    app: 'DJODA_V3',
+    app: APP_ID,
     tipo: tipo,
     bridgeId: bridgeId,
     ...extras
@@ -266,8 +431,12 @@ function avisarPanel(tipo, extras = {}) {
   return true;
 }
 
-// Solo aceptar mensajes del panel autorizado.
+/* ===================================
+   RESPUESTA DE GOOGLE APPS SCRIPT
+   =================================== */
+
 window.addEventListener('message', function(evento) {
+
   if (!origenPermitido(parentOrigin)) return;
 
   if (evento.origin !== parentOrigin) return;
@@ -278,7 +447,7 @@ window.addEventListener('message', function(evento) {
 
   if (
     !d ||
-    d.app !== 'DJODA_V3' ||
+    d.app !== APP_ID ||
     d.bridgeId !== bridgeId ||
     d.tipo !== 'RESULTADO'
   ) {
@@ -303,55 +472,84 @@ window.addEventListener('message', function(evento) {
     return;
   }
 
+  // Ignorar respuestas tardías cuando ya se
+  // mostró un resultado por tiempo agotado.
+  if (!esperandoRespuesta) {
+    return;
+  }
+
   clearTimeout(temporizadorRespuesta);
+
   esperandoRespuesta = false;
 
   const persona = [
-    r.numero || '',
-    r.nombre || ''
+    r.nombre || '',
+    r.numero || ''
   ].filter(Boolean).join(' · ');
 
-  const mensaje = [
-    r.mensaje || 'Sin respuesta',
-    persona
-  ].filter(Boolean).join(' — ');
-
   if (r.estado === 'OK') {
+
     mostrarResultado(
-      '✓ INGRESO AUTORIZADO — ' + mensaje,
+      'INGRESO AUTORIZADO — ' + persona,
       'ok'
     );
+
     sonido(true);
 
+    mostrarModal(
+      'good',
+      'INGRESO AUTORIZADO',
+      persona || 'Entrada válida'
+    );
+
   } else if (r.estado === 'REPETIDA') {
+
     mostrarResultado(
-      '⚠ ENTRADA YA UTILIZADA — ' + mensaje,
+      'ENTRADA YA UTILIZADA — ' + persona,
       'repetida'
     );
+
     sonido(false);
 
+    mostrarModal(
+      'warn',
+      'ENTRADA YA UTILIZADA',
+      persona || r.mensaje
+    );
+
   } else {
+
+    const detalle = [
+      r.mensaje || 'Entrada no autorizada',
+      persona
+    ].filter(Boolean).join('\n');
+
     mostrarResultado(
-      '✕ NO AUTORIZADO — ' + mensaje,
+      'NO AUTORIZADO — ' + detalle,
       'error'
     );
+
     sonido(false);
+
+    mostrarModal(
+      'bad',
+      'NO AUTORIZADO',
+      detalle
+    );
 
     if (
       String(r.mensaje || '')
         .toLowerCase().includes('sesión venció')
     ) {
       conectado = false;
-      mostrarEstado(
-        'Sesión vencida. Volvé a ingresar al panel.'
-      );
       detenerCamara();
     }
   }
 });
 
-// Señal sonora opcional.
-let audioContexto = null;
+/* ===================================
+   SONIDO DE CONFIRMACIÓN
+   =================================== */
 
 function sonido(correcto) {
   try {
@@ -383,35 +581,45 @@ function sonido(correcto) {
     oscilador.stop(
       audioContexto.currentTime + 0.16
     );
-  } catch (e) {}
+
+  } catch (e) {
+    // El sonido es opcional.
+  }
 }
 
+/* ===================================
+   ENVIAR QR PARA VALIDAR
+   =================================== */
+
 function enviarCodigo(codigo) {
+  if (modalOpen || esperandoRespuesta) {
+    return false;
+  }
+
   if (!conectado) {
-    mostrarResultado(
-      'No hay conexión con el panel.',
-      'error'
+    mostrarModal(
+      'bad',
+      'SIN CONEXIÓN',
+      'Abrí el escáner desde el panel de DJODA.'
     );
     return false;
   }
 
-  if (esperandoRespuesta) return false;
-
   const valor = String(codigo || '').trim();
 
   if (!valor || valor.length > 2048) {
-    mostrarResultado(
-      'Código no válido.',
-      'error'
+    mostrarModal(
+      'bad',
+      'QR INVÁLIDO',
+      'El código está vacío o no es válido.'
     );
+    sonido(false);
     return false;
   }
 
   esperandoRespuesta = true;
 
-  mostrarResultado(
-    'Verificando entrada...'
-  );
+  mostrarResultado('Verificando entrada...');
 
   if (!avisarPanel('ESCANEO', {
     codigo: valor
@@ -419,8 +627,10 @@ function enviarCodigo(codigo) {
     esperandoRespuesta = false;
     conectado = false;
 
-    mostrarEstado(
-      'No se pudo comunicar con el panel.'
+    mostrarModal(
+      'bad',
+      'ERROR DE CONEXIÓN',
+      'No se pudo comunicar con Apps Script.'
     );
 
     return false;
@@ -433,9 +643,16 @@ function enviarCodigo(codigo) {
       esperandoRespuesta = false;
 
       mostrarResultado(
-        'No llegó la respuesta. Consultá el estado ' +
-        'antes de volver a intentar.',
+        'No se pudo confirmar el ingreso.',
         'error'
+      );
+
+      mostrarModal(
+        'bad',
+        'SIN CONFIRMACIÓN',
+        'No llegó una respuesta del servidor. ' +
+        'Consultá la planilla antes de reintentar: ' +
+        'el ingreso podría haberse registrado.'
       );
     },
     20000
@@ -444,34 +661,52 @@ function enviarCodigo(codigo) {
   return true;
 }
 
+/* ===================================
+   VALIDACIÓN MANUAL
+   =================================== */
+
 function validarManual() {
-  const codigo =
-    document.getElementById('codigoManual')
-      .value.trim();
+  if (modalOpen || esperandoRespuesta) return;
+
+  const codigo = $('codigoManual').value.trim();
 
   if (enviarCodigo(codigo)) {
-    document.getElementById('codigoManual')
-      .value = '';
+    $('codigoManual').value = '';
   }
 }
+
+/* ===================================
+   ACTIVAR CÁMARA
+   =================================== */
+
+const video = $('video');
+
+const canvas = document.createElement('canvas');
+
+const contexto = canvas.getContext(
+  '2d', { willReadFrequently: true }
+);
 
 async function activarCamara() {
   if (activo) return;
 
   if (!conectado) {
-    mostrarResultado(
-      'Primero iniciá sesión en Apps Script ' +
-      'y abrí el escáner desde allí.',
-      'error'
+    mostrarModal(
+      'bad',
+      'SIN AUTORIZACIÓN',
+      'Iniciá sesión en DJODA y abrí el escáner desde el panel.'
     );
     return;
   }
 
-  if (!navigator.mediaDevices ||
-      !navigator.mediaDevices.getUserMedia) {
-    mostrarResultado(
-      'Este navegador no permite usar la cámara.',
-      'error'
+  if (
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ) {
+    mostrarModal(
+      'bad',
+      'CÁMARA NO DISPONIBLE',
+      'Este navegador no permite utilizar la cámara.'
     );
     return;
   }
@@ -492,8 +727,10 @@ async function activarCamara() {
     await video.play();
 
     activo = true;
+    detector = null;
     ultimoCodigo = '';
     ausenciaDesde = 0;
+    requiereRetirarQR = false;
 
     if ('BarcodeDetector' in window) {
       try {
@@ -510,13 +747,16 @@ async function activarCamara() {
       }
     }
 
-    if (!detector &&
-        typeof window.jsQR !== 'function') {
+    if (
+      !detector &&
+      typeof window.jsQR !== 'function'
+    ) {
       detenerCamara();
 
-      mostrarResultado(
-        'No se pudo cargar el lector QR.',
-        'error'
+      mostrarModal(
+        'bad',
+        'LECTOR NO DISPONIBLE',
+        'No se pudo cargar el lector de códigos QR.'
       );
       return;
     }
@@ -530,13 +770,17 @@ async function activarCamara() {
   } catch (e) {
     detenerCamara();
 
-    mostrarResultado(
-      'No se pudo activar la cámara: ' +
-      errorTexto(e),
-      'error'
+    mostrarModal(
+      'bad',
+      'ERROR DE CÁMARA',
+      errorTexto(e)
     );
   }
 }
+
+/* ===================================
+   DETENER CÁMARA
+   =================================== */
 
 function detenerCamara() {
   activo = false;
@@ -558,6 +802,10 @@ function detenerCamara() {
   );
 }
 
+/* ===================================
+   ESCANEO CONTINUO
+   =================================== */
+
 async function analizarImagen(momento) {
   if (!activo) return;
 
@@ -573,12 +821,11 @@ async function analizarImagen(momento) {
 
   ultimoAnalisis = momento;
 
-  if (video.readyState < 2) {
-    requestAnimationFrame(analizarImagen);
-    return;
-  }
-
-  if (esperandoRespuesta) {
+  if (
+    video.readyState < 2 ||
+    esperandoRespuesta ||
+    modalOpen
+  ) {
     requestAnimationFrame(analizarImagen);
     return;
   }
@@ -629,19 +876,39 @@ async function analizarImagen(momento) {
       }
     }
 
+    // Bloquear nuevas lecturas hasta que
+    // el guardia retire el QR anterior.
+    if (requiereRetirarQR) {
+      if (!codigo) {
+        if (!ausenciaDesde) {
+          ausenciaDesde = Date.now();
+        }
+
+        if (Date.now() - ausenciaDesde >= 1000) {
+          requiereRetirarQR = false;
+          ultimoCodigo = '';
+          ausenciaDesde = 0;
+
+          mostrarEstado(
+            'Lista para la siguiente entrada.'
+          );
+        }
+      } else {
+        ausenciaDesde = 0;
+      }
+
+      return;
+    }
+
     if (codigo) {
       ausenciaDesde = 0;
 
-      // No repetir indefinidamente el mismo QR
-      // si continúa delante de la cámara.
       if (codigo !== ultimoCodigo) {
         ultimoCodigo = codigo;
         enviarCodigo(codigo);
       }
 
     } else if (ultimoCodigo) {
-      // El QR debe retirarse de la cámara durante
-      // un momento para habilitar otra lectura.
       if (!ausenciaDesde) {
         ausenciaDesde = Date.now();
       }
@@ -653,7 +920,7 @@ async function analizarImagen(momento) {
     }
 
   } catch (e) {
-    console.warn('Lectura de QR:', e);
+    console.warn('Error de lectura QR:', e);
 
   } finally {
     procesandoImagen = false;
@@ -664,34 +931,35 @@ async function analizarImagen(momento) {
   }
 }
 
-// Comunicación inicial con Apps Script.
+/* ===================================
+   CONEXIÓN INICIAL
+   =================================== */
+
 function solicitarConexion() {
   if (conectado) return;
 
-  if (!origenPermitido(parentOrigin) ||
-      !bridgeId ||
-      bridgeId.length !== 48) {
+  if (
+    !origenPermitido(parentOrigin) ||
+    !bridgeId ||
+    !/^[a-f0-9]{48}$/i.test(bridgeId)
+  ) {
     mostrarEstado(
-      'Apertura no autorizada. ' +
-      'Ingresá primero desde Apps Script.'
+      'Apertura no autorizada.'
     );
 
     mostrarResultado(
-      'El escáner debe abrirse desde el panel.',
+      'Abrí el escáner desde Apps Script.',
       'error'
     );
+
     return;
   }
 
   if (!window.opener) {
     mostrarEstado(
-      'No se encontró la ventana de Apps Script.'
+      'No se encontró el panel de DJODA.'
     );
 
-    mostrarResultado(
-      'Volvé al panel y abrí el escáner desde allí.',
-      'error'
-    );
     return;
   }
 
@@ -699,18 +967,22 @@ function solicitarConexion() {
 
   temporizadorConexion = setInterval(
     function() {
-      if (!conectado) avisarPanel('LISTO');
+      if (!conectado) {
+        avisarPanel('LISTO');
+      }
     },
     1500
   );
 }
 
+/* ===================================
+   LIMPIEZA
+   =================================== */
+
 document.addEventListener(
   'visibilitychange',
   function() {
     if (document.hidden) {
-      // Evitar mantener la cámara activa
-      // cuando la página deja de estar visible.
       detenerCamara();
     }
   }
@@ -722,6 +994,7 @@ window.addEventListener(
 );
 
 solicitarConexion();
+
 </script>
 </body>
 </html>
